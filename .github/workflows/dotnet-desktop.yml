@@ -21,9 +21,9 @@ jobs:
       with:
         dotnet-version: 8.0.x
     - name: Restore dependencies
-      run: dotnet restore ./TaskManager/TaskManager.sln
+      run: dotnet restore ./TaskManager.sln
     - name: Build
-      run: dotnet build ./TaskManager/TaskManager.sln
+      run: dotnet build ./TaskManager.sln
     - name: Test AppService Layer
       run: dotnet test ./TaskManager.Platform.Tests/TaskManager.Platform.Tests.csproj --configuration Release --verbosity normal --logger trx --collect:"XPlat Code Coverage"
     - name: Test Domain Layer
