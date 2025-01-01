@@ -108,5 +108,35 @@ namespace TaskManager.Platform.Tests
             await taskRepositoryMock.Received().SearchTasks(Arg.Is<string>(t => t == filter.Term),
                 Arg.Is<int>(p => p == filter.Page), Arg.Any<CancellationToken>());
         }
+
+        [Test]
+        public void Update_Should_Throw_If_Command_Is_Null()
+        {
+            Assert.ThrowsAsync<ArgumentNullException>(async () => await taskAppService.Update(null!));
+        }
+
+        [Test]
+        public async Task Update()
+        {
+            var command = new UpdateTaskCommand(Guid.NewGuid(), "title", "description", "branch");
+
+            var expectedTask = new Domain.Tasks.Task()
+            {
+                Id = command.Id,
+                Title = "Feature authentication",
+                Description = "Implement authentication feature",
+                Branch = "feature/authentication",
+                Status = TaskStatus.InProgress
+            };
+
+            taskRepositoryMock.GetTask(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(expectedTask);
+
+            await taskAppService.Update(command);
+
+            await taskRepositoryMock.Received().GetTask(Arg.Is<Guid>(i => i == command.Id),
+                Arg.Any<CancellationToken>());
+
+            await taskRepositoryMock.Received().Commit(Arg.Any<CancellationToken>());
+        }
     }
 }
