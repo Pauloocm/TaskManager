@@ -27,7 +27,7 @@ jobs:
     - name: Test AppService Layer
       run: dotnet test ./TaskManager.Platform.Tests/TaskManager.Platform.Tests.csproj --configuration Release --verbosity normal --logger trx --collect:"XPlat Code Coverage"
     - name: Test Domain Layer
-      run: dotnet test ./TaskManager.Domain.Tests/TaskManager.Domain.Tests.csproject --configuration Release --verbosity normal --logger trx --collect:"XPlat Code Coverage"
+      run: dotnet test ./TaskManager.Domain.Tests/TaskManager.Domain.Tests.csproj --configuration Release --verbosity normal --logger trx --collect:"XPlat Code Coverage"
     
     - name: Combine Coverage Reports # This is because one report is produced per project, and we want one result for all of them.
       uses: danielpalme/ReportGenerator-GitHub-Action@5.2.4
