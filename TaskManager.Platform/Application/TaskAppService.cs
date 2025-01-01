@@ -40,5 +40,17 @@ namespace TaskManager.Platform.Application
 
             return tasks!.ToDto();
         }
+
+        public async System.Threading.Tasks.Task Update(UpdateTaskCommand command, CancellationToken ct = default)
+        {
+            ArgumentNullException.ThrowIfNull(command);
+
+            var task = await repository.GetTask(command.Id, ct)
+                ?? throw new Exception($"Task with id {command.Id} not found");
+
+            task.Update(command.Title, command.Description, command.Branch);
+
+            await repository.Commit(ct);
+        }
     }
 }

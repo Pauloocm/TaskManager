@@ -26,5 +26,21 @@
             Status = TaskStatus.Done;
             CompletedAt = DateTime.UtcNow;
         }
+
+        public void Update(string title, string description, string branch)
+        {
+            ArgumentNullException.ThrowIfNull(title);
+            ArgumentNullException.ThrowIfNull(description);
+            ArgumentNullException.ThrowIfNull(branch);
+
+            if (Status == TaskStatus.Done)
+                throw new Exception("Cannot update a completed task");
+
+            Title = title;
+            Description = description;
+            Branch = branch;
+
+            UpdatedAt = DateTime.UtcNow;
+        }
     }
 }

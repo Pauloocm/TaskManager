@@ -30,12 +30,22 @@ namespace TaskManager.Controllers
             return Ok(tasks);
         }
 
-        [HttpPut]
+        [HttpPut("/Complete")]
         public async Task<IActionResult> Complete([FromQuery] CompleteTaskCommand command, CancellationToken ct = default)
         {
             ArgumentNullException.ThrowIfNull(command);
 
             await taskAppService.Complete(command, ct);
+
+            return Ok();
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Update([FromQuery] UpdateTaskCommand command, CancellationToken ct = default)
+        {
+            ArgumentNullException.ThrowIfNull(command);
+
+            await taskAppService.Update(command, ct);
 
             return Ok();
         }
