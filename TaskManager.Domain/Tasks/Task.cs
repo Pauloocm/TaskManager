@@ -29,9 +29,9 @@
 
         public void Update(string title, string description, string branch)
         {
-            ArgumentNullException.ThrowIfNull(title);
-            ArgumentNullException.ThrowIfNull(description);
-            ArgumentNullException.ThrowIfNull(branch);
+            ArgumentException.ThrowIfNullOrWhiteSpace(title);
+            ArgumentException.ThrowIfNullOrWhiteSpace(description);
+            ArgumentException.ThrowIfNullOrWhiteSpace(branch);
 
             if (Status == TaskStatus.Done)
                 throw new Exception("Cannot update a completed task");
