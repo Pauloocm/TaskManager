@@ -21,10 +21,7 @@
 
         public void Complete()
         {
-            if (Status == TaskStatus.Done)
-            {
-                throw new InvalidOperationException("Task is already completed");
-            }
+            if (Status == TaskStatus.Done) return;
 
             Status = TaskStatus.Done;
             CompletedAt = DateTime.UtcNow;
