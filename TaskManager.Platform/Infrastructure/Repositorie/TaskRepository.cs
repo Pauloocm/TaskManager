@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 using TaskManager.Domain.Tasks;
 using TaskManager.Platform.Infrastructure.Database;
 using Task = TaskManager.Domain.Tasks.Task;
+using TaskStatus = TaskManager.Domain.Tasks.TaskStatus;
 
 namespace TaskManager.Platform.Infrastructure.Repositorie
 {
@@ -20,7 +20,7 @@ namespace TaskManager.Platform.Infrastructure.Repositorie
 
         public Task<Task?> GetTask(Guid id, CancellationToken ct)
         {
-            if(id == Guid.Empty) throw new ArgumentException("Id cannot be empty", nameof(id));
+            if (id == Guid.Empty) throw new ArgumentException("Id cannot be empty", nameof(id));
 
             return dataContext.Task.FirstOrDefaultAsync(t => t.Id == id, ct);
         }
@@ -30,15 +30,24 @@ namespace TaskManager.Platform.Infrastructure.Repositorie
         }
 
 
-        public async Task<IEnumerable<Task?>> SearchTasks(string? term, int page, CancellationToken ct = default)
+        public async Task<IEnumerable<Task?>> SearchTasks(string? term, int page, bool Done = false, CancellationToken ct = default)
         {
             IQueryable<Task?> tasksQuery = dataContext.Task;
+
+            if (Done)
+            {
+                tasksQuery = tasksQuery.Where(t => t!.Status == TaskStatus.Done);
+            }else
+            {
+                tasksQuery = tasksQuery.Where(t => t!.Status == TaskStatus.InProgress);
+            }
 
             if (!string.IsNullOrWhiteSpace(term))
             {
                 tasksQuery = tasksQuery.Where(t => t!.Title.Contains(term) || t.Description.Contains(term) || t.Branch.Contains(term));
             }
-
+            
+            var test = tasksQuery.Where(t => t!.Status == TaskStatus.Done).ToList();
             var tasks = await tasksQuery.Skip((page - 1) * 5).Take(5).ToListAsync(ct);
 
             return [.. tasks];

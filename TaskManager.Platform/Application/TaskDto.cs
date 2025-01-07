@@ -8,6 +8,7 @@ namespace TaskManager.Platform.Application
         public string Title { get; set; } = null!;
         public string Description { get; set; } = null!;
         public string Branch { get; set; } = null!;
+        public string? Type { get; set; } = null!;
         public DateTime CreatedAt { get; set; }
         public DateTime? FinishedAt { get; set; }
 
@@ -28,7 +29,8 @@ namespace TaskManager.Platform.Application
                 Branch = task.Branch,
                 CreatedAt = task.CreatedAt,
                 FinishedAt = task.CompletedAt,
-                Status = task.Status.Status
+                Status = task.Status.Status,
+                Type = task?.Type?.Type
             };
 
             return dto;

@@ -31,7 +31,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<ITaskRepository, TaskRepository>();
 builder.Services.AddTransient<ITaskAppService, TaskAppService>();
 
-builder.Services.AddDbContext<DataContext>(options => options.UseNpgsql(""));
+builder.Services.AddDbContext<DataContext>(options => options.UseNpgsql("Server=localhost:5433;Database=Tasks;Username=postgres;Password=root"));
 
 builder.Services.AddCors();
 
