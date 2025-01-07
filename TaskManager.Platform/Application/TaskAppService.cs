@@ -12,7 +12,7 @@ namespace TaskManager.Platform.Application
         {
             ArgumentNullException.ThrowIfNull(command);
 
-            var task = TaskFactory.Create(command.Title, command.Description, command.Branch);
+            var task = TaskFactory.Create(command.Title, command.Description, command.Branch, command.TypeId);
 
             await repository.Add(task, ct);
             await repository.Commit(ct);
@@ -36,7 +36,7 @@ namespace TaskManager.Platform.Application
         {
             ArgumentNullException.ThrowIfNull(filter);
 
-            var tasks = await repository.SearchTasks(filter.Term, filter.Page, ct);
+            var tasks = await repository.SearchTasks(filter.Term, filter.Page, filter.Done, ct);
 
             return tasks!.ToDto();
         }

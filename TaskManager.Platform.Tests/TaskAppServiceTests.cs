@@ -28,20 +28,22 @@ namespace TaskManager.Platform.Tests
         [Test]
         public async Task Add()
         {
-            var command = new AddTaskCommand("title", "description", "branch");
+            var command = new AddTaskCommand("title", "description", "branch", 1);
 
             var expectedTask = new Domain.Tasks.Task()
             {
                 Title = "Feature authentication",
                 Description = "Implement authentication feature",
                 Branch = "feature/authentication",
-                Status = TaskStatus.InProgress
+                Status = TaskStatus.InProgress,
+                Type = TaskType.Feature
             };
 
             var id = await taskAppService.Add(command);
 
             await taskRepositoryMock.Received().Add(Arg.Is<Domain.Tasks.Task>(t =>
-            t.Title == command.Title && t.Description == command.Description && t.Branch == command.Branch));
+            t.Title == command.Title && t.Description == command.Description
+            && t.Branch == command.Branch && t.Type.Id == command.TypeId));
 
             await taskRepositoryMock.Received().Commit();
         }
@@ -98,7 +100,7 @@ namespace TaskManager.Platform.Tests
                 }
             };
 
-            taskRepositoryMock.SearchTasks(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
+            taskRepositoryMock.SearchTasks(Arg.Any<string>(), Arg.Any<int>(), ct: Arg.Any<CancellationToken>())
                 .Returns(expectedTasks);
 
             var tasks = await taskAppService.Search(filter);
@@ -106,7 +108,7 @@ namespace TaskManager.Platform.Tests
             Assert.That(tasks, Has.Count.EqualTo(expectedTasks.Count));
 
             await taskRepositoryMock.Received().SearchTasks(Arg.Is<string>(t => t == filter.Term),
-                Arg.Is<int>(p => p == filter.Page), Arg.Any<CancellationToken>());
+                Arg.Is<int>(p => p == filter.Page), ct: Arg.Any<CancellationToken>());
         }
 
         [Test]
