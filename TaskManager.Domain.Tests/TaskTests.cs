@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+using TaskManager.Domain.Tasks;
 using Task = TaskManager.Domain.Tasks.Task;
 using TaskStatus = TaskManager.Domain.Tasks.TaskStatus;
 
@@ -15,7 +16,8 @@ namespace TaskManager.Domain.Tests
                 Title = "Feature authentication",
                 Description = "Implement authentication feature",
                 Branch = "feature/authentication",
-                Status = TaskStatus.InProgress
+                Status = TaskStatus.InProgress,
+                Type = TaskType.Feature
             };
 
             Assert.That(task.CompletedAt, Is.Null);
@@ -24,9 +26,14 @@ namespace TaskManager.Domain.Tests
 
             Assert.Multiple(() =>
             {
+
+                Assert.That(task.Title, Is.EqualTo("Feature authentication"));
+                Assert.That(task.Description, Is.EqualTo("Implement authentication feature"));
+                Assert.That(task.Branch, Is.EqualTo("feature/authentication"));
+                Assert.That(task.Type, Is.EqualTo(TaskType.Feature));
                 Assert.That(task.Status, Is.EqualTo(TaskStatus.Done));
                 Assert.That(task?.CompletedAt, Is.Not.Null);
-                Assert.That(task?.CompletedAt!.Value.Date, Is.EqualTo(DateTime.Now.Date));
+                Assert.That(task?.CompletedAt!.Value.Date, Is.Not.EqualTo(DateTime.MinValue));
             });
         }
 

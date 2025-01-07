@@ -5,7 +5,7 @@
         public Task()
         {
             Id = Guid.NewGuid();
-            CreatedAt = DateTime.Now;
+            CreatedAt = DateTime.UtcNow;
             Status = TaskStatus.InProgress;
         }
 
@@ -13,6 +13,7 @@
         public string Title { get; set; } = null!;
         public string Description { get; set; } = null!;
         public string Branch { get; set; } = null!;
+        public TaskType Type { get; set; } = null!;
         public TaskStatus Status { get; set; } = null!;
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
