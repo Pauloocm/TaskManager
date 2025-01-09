@@ -57,22 +57,22 @@ namespace TaskManager.Platform.Tests
         [Test]
         public async Task Complete()
         {
-            var command = new CompleteTaskCommand(Guid.NewGuid());
+            var command = new CompleteTaskCommand("Feature authentication)");
 
             var expectedTask = new Domain.Tasks.Task()
             {
-                Id = command.Id,
+                Id = Guid.NewGuid(),
                 Title = "Feature authentication",
                 Description = "Implement authentication feature",
                 Branch = "feature/authentication",
                 Status = TaskStatus.InProgress
             };
 
-            taskRepositoryMock.GetTask(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(expectedTask);
+            taskRepositoryMock.GetTask(Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns(expectedTask);
 
             await taskAppService.Complete(command);
 
-            await taskRepositoryMock.Received().GetTask(Arg.Is<Guid>(i => i == command.Id),
+            await taskRepositoryMock.Received().GetTask(Arg.Is<string>(i => i == command.TaskTitle),
                 Arg.Any<CancellationToken>());
 
             await taskRepositoryMock.Received().Commit();
@@ -104,7 +104,7 @@ namespace TaskManager.Platform.Tests
                 .Returns(expectedTasks);
 
             var tasks = await taskAppService.Search(filter);
-            
+
             Assert.That(tasks, Has.Count.EqualTo(expectedTasks.Count));
 
             await taskRepositoryMock.Received().SearchTasks(Arg.Is<string>(t => t == filter.Term),

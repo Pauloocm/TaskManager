@@ -24,6 +24,14 @@ namespace TaskManager.Platform.Infrastructure.Repositorie
 
             return dataContext.Task.FirstOrDefaultAsync(t => t.Id == id, ct);
         }
+
+        public Task<Task?> GetTask(string taskTitle, CancellationToken ct)
+        {
+            ArgumentException.ThrowIfNullOrEmpty(taskTitle);
+
+            return dataContext.Task.FirstOrDefaultAsync(t => t.Title == taskTitle, ct);
+        }
+
         public async System.Threading.Tasks.Task Commit(CancellationToken ct = default)
         {
             await dataContext.SaveChangesAsync(ct);
@@ -37,7 +45,8 @@ namespace TaskManager.Platform.Infrastructure.Repositorie
             if (Done)
             {
                 tasksQuery = tasksQuery.Where(t => t!.Status == TaskStatus.Done);
-            }else
+            }
+            else
             {
                 tasksQuery = tasksQuery.Where(t => t!.Status == TaskStatus.InProgress);
             }
@@ -46,7 +55,7 @@ namespace TaskManager.Platform.Infrastructure.Repositorie
             {
                 tasksQuery = tasksQuery.Where(t => t!.Title.Contains(term) || t.Description.Contains(term) || t.Branch.Contains(term));
             }
-            
+
             var test = tasksQuery.Where(t => t!.Status == TaskStatus.Done).ToList();
             var tasks = await tasksQuery.Skip((page - 1) * 5).Take(5).ToListAsync(ct);
 
