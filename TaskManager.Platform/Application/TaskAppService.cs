@@ -24,8 +24,8 @@ namespace TaskManager.Platform.Application
         {
             ArgumentNullException.ThrowIfNull(command);
 
-            var task = await repository.GetTask(command.Id, ct)
-                ?? throw new Exception($"Task with id {command.Id} not found");
+            var task = await repository.GetTask(command.TaskTitle, ct)
+                ?? throw new Exception($"Task with name {command.TaskTitle} not found");
 
             task.Complete();
 
