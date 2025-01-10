@@ -40,12 +40,12 @@ namespace TaskManager.Controllers
             return Ok();
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Update([FromQuery] UpdateTaskCommand command, CancellationToken ct = default)
+        [HttpPut("{Id:Guid}")]
+        public async Task<IActionResult> Update([FromRoute] Guid Id, [FromBody] UpdateTaskCommand command, CancellationToken ct = default)
         {
             ArgumentNullException.ThrowIfNull(command);
 
-            await taskAppService.Update(command, ct);
+            await taskAppService.Update(command.SetId(Id), ct);
 
             return Ok();
         }

@@ -5,6 +5,9 @@ namespace TaskManager.Platform.Application
 {
     public class TaskAppService(ITaskRepository taskRepository) : ITaskAppService
     {
+        //private readonly ITaskRepository repository = taskRepository ??
+        //    throw new ArgumentNullException(nameof(taskRepository));
+
         private readonly ITaskRepository repository = taskRepository ??
             throw new ArgumentNullException(nameof(taskRepository));
 
@@ -14,8 +17,8 @@ namespace TaskManager.Platform.Application
 
             var task = TaskFactory.Create(command.Title, command.Description, command.Branch, command.TypeId);
 
-            await repository.Add(task, ct);
-            await repository.Commit(ct);
+            await repository.SaveAsync(task, ct);
+            //await repository.Commit(ct);
 
             return task.Id;
         }
@@ -24,21 +27,23 @@ namespace TaskManager.Platform.Application
         {
             ArgumentNullException.ThrowIfNull(command);
 
-            var task = await repository.GetTask(command.TaskTitle, ct)
-                ?? throw new Exception($"Task with name {command.TaskTitle} not found");
+            //var task = await repository.GetTask(command.TaskTitle, ct)
+            //    ?? throw new Exception($"Task with name {command.TaskTitle} not found");
 
-            task.Complete();
+            //task.Complete();
 
-            await repository.Commit(ct);
+            //await repository.Commit(ct);
         }
 
         public async Task<List<TaskDto>> Search(SearchTasksFilter filter, CancellationToken ct = default)
         {
             ArgumentNullException.ThrowIfNull(filter);
 
-            var tasks = await repository.SearchTasks(filter.Term, filter.Page, filter.Done, ct);
+            //var tasks = await repository.SearchTasks(filter.Term, filter.Page, filter.Done, ct);
 
-            return tasks!.ToDto();
+            //return tasks!.ToDto();
+
+            return [];
         }
 
         public async System.Threading.Tasks.Task Update(UpdateTaskCommand command, CancellationToken ct = default)
@@ -49,8 +54,6 @@ namespace TaskManager.Platform.Application
                 ?? throw new Exception($"Task with id {command.Id} not found");
 
             task.Update(command.Title, command.Description, command.Branch);
-
-            await repository.Commit(ct);
         }
     }
 }
