@@ -21,11 +21,9 @@ namespace TaskManager.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetLatest([FromQuery] SearchTasksFilter filter, CancellationToken ct = default)
+        public async Task<IActionResult> GetLatest(CancellationToken ct = default)
         {
-            ArgumentNullException.ThrowIfNull(filter);
-
-            var tasks = await taskAppService.GetLatestFinisheds(filter, ct);
+            var tasks = await taskAppService.GetLatestFinisheds(ct);
 
             return Ok(tasks);
         }

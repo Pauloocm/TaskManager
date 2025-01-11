@@ -31,10 +31,8 @@ namespace TaskManager.Platform.Application
             await repository.SaveAsync(task, ct);
         }
 
-        public async Task<List<TaskDto>> GetLatestFinisheds(SearchTasksFilter filter, CancellationToken ct = default)
+        public async Task<List<TaskDto>> GetLatestFinisheds(CancellationToken ct = default)
         {
-            ArgumentNullException.ThrowIfNull(filter);
-
             var tasks = await repository.GetLatestFinished(ct);
 
             return tasks!.ToDto();
