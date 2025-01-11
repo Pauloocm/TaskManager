@@ -6,7 +6,7 @@ using TaskStatus = TaskManager.Domain.Tasks.TaskStatus;
 
 namespace TaskManager.Platform.Infrastructure.Repositorie
 {
-    public class TaskRepository(DataContext dataContext) : ITaskRepository
+    public class TaskRepository(DataContext dataContext)
     {
         private readonly DataContext dataContext = dataContext
             ?? throw new ArgumentNullException(nameof(dataContext));

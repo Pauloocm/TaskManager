@@ -41,11 +41,11 @@ namespace TaskManager.Platform.Tests
 
             var id = await taskAppService.Add(command);
 
-            await taskRepositoryMock.Received().Add(Arg.Is<Domain.Tasks.Task>(t =>
+            await taskRepositoryMock.Received().SaveAsync(Arg.Is<Domain.Tasks.Task>(t =>
             t.Title == command.Title && t.Description == command.Description
             && t.Branch == command.Branch && t.Type.Id == command.TypeId));
 
-            await taskRepositoryMock.Received().Commit();
+            await taskRepositoryMock.Received().SaveAsync(Arg.Is<Domain.Tasks.Task>(t => t.Id == id));
         }
 
         [Test]
@@ -57,7 +57,7 @@ namespace TaskManager.Platform.Tests
         [Test]
         public async Task Complete()
         {
-            var command = new CompleteTaskCommand("Feature authentication)");
+            var command = new CompleteTaskCommand("Feature authentication");
 
             var expectedTask = new Domain.Tasks.Task()
             {
@@ -68,24 +68,24 @@ namespace TaskManager.Platform.Tests
                 Status = TaskStatus.InProgress
             };
 
-            taskRepositoryMock.GetTask(Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns(expectedTask);
+            taskRepositoryMock.GetTaskByTitle(Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns(expectedTask);
 
             await taskAppService.Complete(command);
 
-            await taskRepositoryMock.Received().GetTask(Arg.Is<string>(i => i == command.TaskTitle),
+            await taskRepositoryMock.Received().GetTaskByTitle(Arg.Is<string>(i => i == command.TaskTitle),
                 Arg.Any<CancellationToken>());
 
-            await taskRepositoryMock.Received().Commit();
+            await taskRepositoryMock.Received().SaveAsync(Arg.Is<Domain.Tasks.Task>(t => t.Title == command.TaskTitle));
         }
 
         [Test]
-        public void Search_Should_Throw_If_Filter_Is_Null()
+        public void GetLatestFinished_Should_Throw_If_Filter_Is_Null()
         {
-            Assert.ThrowsAsync<ArgumentNullException>(async () => await taskAppService.Search(null!));
+            Assert.ThrowsAsync<ArgumentNullException>(async () => await taskAppService.GetLatestFinisheds(null!));
         }
 
         [Test]
-        public async Task Search()
+        public async Task GetLatestFinished()
         {
             var filter = new SearchTasksFilter(1, "authentication");
 
@@ -100,15 +100,14 @@ namespace TaskManager.Platform.Tests
                 }
             };
 
-            taskRepositoryMock.SearchTasks(Arg.Any<string>(), Arg.Any<int>(), ct: Arg.Any<CancellationToken>())
+            taskRepositoryMock.GetLatestFinished(Arg.Any<CancellationToken>())
                 .Returns(expectedTasks);
 
-            var tasks = await taskAppService.Search(filter);
+            var tasks = await taskAppService.GetLatestFinisheds(filter);
 
             Assert.That(tasks, Has.Count.EqualTo(expectedTasks.Count));
 
-            await taskRepositoryMock.Received().SearchTasks(Arg.Is<string>(t => t == filter.Term),
-                Arg.Is<int>(p => p == filter.Page), ct: Arg.Any<CancellationToken>());
+            await taskRepositoryMock.Received().GetLatestFinished(Arg.Any<CancellationToken>());
         }
 
         [Test]
@@ -120,7 +119,13 @@ namespace TaskManager.Platform.Tests
         [Test]
         public async Task Update()
         {
-            var command = new UpdateTaskCommand(Guid.NewGuid(), "title", "description", "branch");
+            var command = new UpdateTaskCommand()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Title",
+                Description = "Description",
+                Branch = "Branch"
+            };
 
             var expectedTask = new Domain.Tasks.Task()
             {
@@ -138,7 +143,8 @@ namespace TaskManager.Platform.Tests
             await taskRepositoryMock.Received().GetTask(Arg.Is<Guid>(i => i == command.Id),
                 Arg.Any<CancellationToken>());
 
-            await taskRepositoryMock.Received().Commit(Arg.Any<CancellationToken>());
+            await taskRepositoryMock.Received().SaveAsync(Arg.Is<Domain.Tasks.Task>(t => t.Id == expectedTask.Id
+            && t.Title == command.Title && t.Description == command.Description && t.Branch == command.Branch ));
         }
     }
 }

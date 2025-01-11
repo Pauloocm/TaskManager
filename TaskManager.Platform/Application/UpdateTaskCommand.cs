@@ -1,4 +1,16 @@
 ﻿namespace TaskManager.Platform.Application
 {
-    public record UpdateTaskCommand(Guid Id, string Title, string Description, string Branch);
+    public class UpdateTaskCommand()
+    {
+        public Guid Id { get; set; }
+        public string Title { get; set; } = null!;
+        public string Description { get; set; } = null!;
+        public string Branch { get; set; } = null!;
+
+        public UpdateTaskCommand SetId(Guid id)
+        {
+            Id = id;
+            return this;
+        }
+    };
 }
