@@ -25,7 +25,7 @@
             if (Status == TaskStatus.Done) return;
 
             Status = TaskStatus.Done;
-            CompletedAt = DateTime.UtcNow;
+            CompletedAt = DateTime.Now;
         }
 
         public void Update(string title, string description, string branch)

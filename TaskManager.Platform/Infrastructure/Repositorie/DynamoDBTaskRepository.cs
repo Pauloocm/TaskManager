@@ -1,18 +1,28 @@
-﻿using Amazon.DynamoDBv2.DataModel;
+﻿using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
-using Microsoft.EntityFrameworkCore;
+using Amazon.DynamoDBv2.Model;
 using TaskManager.Domain.Tasks;
-using TaskManager.Platform.Infrastructure.Database;
 using TaskManager.Platform.Infrastructure.Models;
 using Task = TaskManager.Domain.Tasks.Task;
-using TaskStatus = TaskManager.Domain.Tasks.TaskStatus;
 
 namespace TaskManager.Platform.Infrastructure.Repositorie
 {
-    public class DynamoDBTaskRepository(IDynamoDBContext dynamoDbContext) : ITaskRepository
+    public class DynamoDBTaskRepository(IDynamoDBContext dynamoDbContext, IAmazonDynamoDB dynamoClient) : ITaskRepository
     {
         private readonly IDynamoDBContext context = dynamoDbContext
             ?? throw new ArgumentNullException(nameof(dynamoDbContext));
+
+        private readonly IAmazonDynamoDB dynamoDbClient = dynamoClient
+            ?? throw new ArgumentNullException(nameof(dynamoClient));
+
+        private readonly string TableName = "Tasks";
+
+
+        private const string KeyConditionStatusId = "StatusId = :statusId";
+        private const string StatusIdSKIndex = "StatusId-SK-index";
+        private const string KeyConditionStatusIdAndBeginsWithSk = "StatusId = :statusId AND begins_with(SK, :sk)";
+        private const string KeyConditionBeginsWithPKAndBeginsWithSk = "PK = :pk AND begins_with(SK, :sk)";
 
         public async System.Threading.Tasks.Task SaveAsync(Task task, CancellationToken ct = default)
         {
@@ -29,10 +39,11 @@ namespace TaskManager.Platform.Infrastructure.Repositorie
             {
                 KeyExpression = new Expression
                 {
-                    ExpressionStatement = "PK = :pk",
+                    ExpressionStatement = KeyConditionBeginsWithPKAndBeginsWithSk,
                     ExpressionAttributeValues = new Dictionary<string, DynamoDBEntry>
                 {
-                    { ":pk", $"TASK#{id}" }
+                    { ":pk", $"TASK#{id}" },
+                    { ":sk", "CREATEDAT#" }
                 }
                 }
             };
@@ -43,54 +54,49 @@ namespace TaskManager.Platform.Infrastructure.Repositorie
             return results.SingleOrDefault()?.ToDomain();
         }
 
-        public Task<Task?> GetTask(string taskTitle, CancellationToken ct)
+        public async Task<Task?> GetTaskByTitle(string taskTitle, CancellationToken ct)
         {
             ArgumentException.ThrowIfNullOrEmpty(taskTitle);
 
-            //return dataContext.Task.FirstOrDefaultAsync(t => t.Title == taskTitle, ct);
+            var queryConfig = new QueryRequest
+            {
+                TableName = TableName,
+                FilterExpression = "Title = :title",
+                KeyConditionExpression = KeyConditionStatusIdAndBeginsWithSk,
+                IndexName = StatusIdSKIndex,
+                ExpressionAttributeValues = new Dictionary<string, AttributeValue>
+                 {
+                    { ":statusId", new AttributeValue { N = "1" } },
+                    { ":sk", new AttributeValue { S = "CREATEDAT#" } },
+                    { ":title", new AttributeValue { S = $"{taskTitle}" } }
+                },
+            };
 
-            return null;
+            var response = await dynamoDbClient.QueryAsync(queryConfig, ct);
+
+            return response.Items.SingleOrDefault().ToDomain();
         }
 
-        //public async System.Threading.Tasks.Task Commit(CancellationToken ct = default)
-        //{
+        public async Task<IEnumerable<Task?>> GetLatestFinished(CancellationToken ct = default)
+        {
+            var queryRequest = new QueryRequest
+            {
+                TableName = TableName,
+                IndexName = StatusIdSKIndex,
+                KeyConditionExpression = KeyConditionStatusId,
 
-        //}
+                ExpressionAttributeValues = new Dictionary<string, AttributeValue>() {
 
-        //public async System.Threading.Tasks.Task Add(Task task, CancellationToken ct = default)
-        //{
-        //    ArgumentNullException.ThrowIfNull(task);
+                    { ":statusId", new AttributeValue { N = "1" } }
+                },
 
-        //    await dataContext.Task.AddAsync(task, ct);
-        //}
+                ScanIndexForward = true,
+                Limit = 5
+            };
 
+            var response = await dynamoDbClient.QueryAsync(queryRequest, ct);
 
-
-
-
-
-        //public async Task<IEnumerable<Task?>> SearchTasks(string? term, int page, bool Done = false, CancellationToken ct = default)
-        //{
-        //    IQueryable<Task?> tasksQuery = dataContext.Task;
-
-        //    if (Done)
-        //    {
-        //        tasksQuery = tasksQuery.Where(t => t!.Status == TaskStatus.Done);
-        //    }
-        //    else
-        //    {
-        //        tasksQuery = tasksQuery.Where(t => t!.Status == TaskStatus.InProgress);
-        //    }
-
-        //    if (!string.IsNullOrWhiteSpace(term))
-        //    {
-        //        tasksQuery = tasksQuery.Where(t => t!.Title.Contains(term) || t.Description.Contains(term) || t.Branch.Contains(term));
-        //    }
-
-        //    var test = tasksQuery.Where(t => t!.Status == TaskStatus.Done).ToList();
-        //    var tasks = await tasksQuery.Skip((page - 1) * 5).Take(5).ToListAsync(ct);
-
-        //    return [.. tasks];
-        //}
+            return response.ToDomain();
+        }
     }
 }

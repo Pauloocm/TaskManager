@@ -6,10 +6,10 @@ namespace TaskManager.Platform.Infrastructure.Models
     public class TaskModel
     {
         [DynamoDBHashKey("PK")]
-        private string PK { get; set; } = null!;
+        public string PK { get; set; } = null!;
 
         [DynamoDBRangeKey("SK")]
-        private string SK { get; set; } = null!;
+        public string SK { get; set; } = null!;
 
         public Guid Id { get; set; }
 

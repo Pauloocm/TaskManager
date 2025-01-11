@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+using NUnit.Framework.Internal;
 using TaskManager.Domain.Tasks;
 using Task = TaskManager.Domain.Tasks.Task;
 using TaskStatus = TaskManager.Domain.Tasks.TaskStatus;
@@ -67,6 +68,9 @@ namespace TaskManager.Domain.Tests
             var test1 = DateTime.Now.ToUniversalTime().ToString("dd-MM-yyyy HH:mm:ss");
             var test2 = DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
+            var test3 = DateTime.Now.ToUniversalTime();
+            var test4 = test3.ToLocalTime();
+            var test5 = test4.ToLocalTime();
 
             var task = new Task()
             {
