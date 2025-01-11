@@ -54,6 +54,8 @@ namespace TaskManager.Platform.Application
                 ?? throw new Exception($"Task with id {command.Id} not found");
 
             task.Update(command.Title, command.Description, command.Branch);
+
+            await repository.SaveAsync(task, ct);
         }
     }
 }

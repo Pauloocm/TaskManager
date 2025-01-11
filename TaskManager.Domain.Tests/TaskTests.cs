@@ -63,6 +63,11 @@ namespace TaskManager.Domain.Tests
         [Test]
         public void Update()
         {
+
+            var test1 = DateTime.Now.ToUniversalTime().ToString("dd-MM-yyyy HH:mm:ss");
+            var test2 = DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+
             var task = new Task()
             {
                 Title = "Feature authentication",

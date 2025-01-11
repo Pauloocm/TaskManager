@@ -51,7 +51,29 @@ namespace TaskManager.Platform.Infrastructure.Models
                 UpdatedAt = task.UpdatedAt
             };
 
-            model.SetKeys(task.Id, task.Title);
+            model.SetKeys(task.Id, task.CreatedAt);
+
+            return model;
+        }
+
+        public static TaskModel ToModel(this Task task, Guid id, DateTime createdAt)
+        {
+            ArgumentNullException.ThrowIfNull(task);
+
+            var model = new TaskModel()
+            {
+                Id = task.Id,
+                Title = task.Title,
+                Description = task.Description,
+                Branch = task.Branch,
+                StatusId = task.Status.Id,
+                TypeId = task.Type.Id,
+                CompletedAt = task.CompletedAt,
+                CreatedAt = task.CreatedAt,
+                UpdatedAt = task.UpdatedAt
+            };
+
+            model.SetKeys(task.Id, task.CreatedAt);
 
             return model;
         }

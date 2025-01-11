@@ -18,20 +18,7 @@ namespace TaskManager.Platform.Infrastructure.Repositorie
         {
             ArgumentNullException.ThrowIfNull(task);
 
-            var model = new TaskModel()
-            {
-                Description = task.Description,
-                Branch = task.Branch,
-                StatusId = task.Status.Id,
-                TypeId = task.Type.Id,
-                CompletedAt = task.CompletedAt,
-                CreatedAt = task.CreatedAt,
-                UpdatedAt = task.UpdatedAt
-            };
-
-            model.SetKeys(task.Id, task.Title);
-
-            await context.SaveAsync(model, ct);
+            await context.SaveAsync(task.ToModel(task.Id, task.CreatedAt), ct);
         }
 
         public async Task<Task?> GetTask(Guid id, CancellationToken ct)

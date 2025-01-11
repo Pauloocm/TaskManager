@@ -1,43 +1,15 @@
 ﻿using Amazon.DynamoDBv2.DataModel;
-using TaskManager.Domain.Tasks;
 
 namespace TaskManager.Platform.Infrastructure.Models
 {
     [DynamoDBTable("Tasks")]
     public class TaskModel
     {
-
-        private string pk = null!;
-        private string sk = null!;
-
         [DynamoDBHashKey("PK")]
-        public string PK
-        {
-            get => pk;
-            set
-            {
-                pk = value;
-                if (!string.IsNullOrEmpty(pk))
-                {
-                    var idString = pk.Replace("TASK#", "");
-                    Id = Guid.Parse(idString);
-                }
-            }
-        }
+        private string PK { get; set; } = null!;
 
         [DynamoDBRangeKey("SK")]
-        public string SK
-        {
-            get => sk;
-            set
-            {
-                sk = value;
-                if (!string.IsNullOrEmpty(sk))
-                {
-                    Title = sk.Replace("TITLE#", "");
-                }
-            }
-        }
+        private string SK { get; set; } = null!;
 
         public Guid Id { get; set; }
 
@@ -52,12 +24,10 @@ namespace TaskManager.Platform.Infrastructure.Models
         public DateTime? CompletedAt { get; set; }
 
 
-        public void SetKeys(Guid id, string title)
+        public void SetKeys(Guid id, DateTime createdAt)
         {
-            Id = id;
-            Title = title;
             PK = $"TASK#{id}";
-            SK = $"TITLE#{title}";
+            SK = $"CREATEDAT#{createdAt.ToUniversalTime():yyyy-MM-dd'T'HH:mm:ss'Z'}";
         }
     }
 }
