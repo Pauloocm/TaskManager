@@ -90,9 +90,9 @@ namespace TaskManager.Platform.Infrastructure.Models
             var task = new Task()
             {
                 Id = Guid.Parse(queryResponse["Id"].S),
-                Title = queryResponse["Title"].S is null ? queryResponse["Title"].S : "",
-                Description = queryResponse["Description"].S is null ? queryResponse["Description"].S : "",
-                Branch = queryResponse["Branch"].S is null ? queryResponse["Branch"].S : "",
+                Title = queryResponse["Title"].S is null ? "" : queryResponse["Title"].S,
+                Description = queryResponse["Description"].S is null ? "" : queryResponse["Description"].S,
+                Branch = queryResponse["Branch"].S is null ? "" : queryResponse["Branch"].S,
                 Status = TaskStatus.GetById(int.Parse(queryResponse["StatusId"].N))!,
                 Type = TaskType.GetById(int.Parse(queryResponse["TypeId"].N))!,
                 CreatedAt = DateTime.Parse(queryResponse["CreatedAt"].S).ToLocalTime(),
