@@ -79,16 +79,8 @@ namespace TaskManager.Platform.Tests
         }
 
         [Test]
-        public void GetLatestFinished_Should_Throw_If_Filter_Is_Null()
-        {
-            Assert.ThrowsAsync<ArgumentNullException>(async () => await taskAppService.GetLatestFinisheds(null!));
-        }
-
-        [Test]
         public async Task GetLatestFinished()
         {
-            var filter = new SearchTasksFilter(1, "authentication");
-
             var expectedTasks = new List<Domain.Tasks.Task>()
             {
                 new()
@@ -103,7 +95,7 @@ namespace TaskManager.Platform.Tests
             taskRepositoryMock.GetLatestFinished(Arg.Any<CancellationToken>())
                 .Returns(expectedTasks);
 
-            var tasks = await taskAppService.GetLatestFinisheds(filter);
+            var tasks = await taskAppService.GetLatestFinisheds(CancellationToken.None);
 
             Assert.That(tasks, Has.Count.EqualTo(expectedTasks.Count));
 
