@@ -1,0 +1,12 @@
+{
+  "profile": "",
+  "region": "",
+  "configuration": "Release",
+  "function-runtime": "dotnet8",
+  "function-memory-size": 256,
+  "function-timeout": 30,
+  "function-handler": "TaskManager",
+  "function-name": "TaskManager-Api",
+  "environment-variables": "ASPNETCORE_ENVIRONMENT=Development",
+  "function-url-enabled": true
+}

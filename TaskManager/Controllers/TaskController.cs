@@ -17,15 +17,15 @@ namespace TaskManager.Controllers
 
             var taskId = await taskAppService.Add(command, ct);
 
-            return Created(nameof(Search), new { id = taskId });
+            return Created(nameof(GetLatest), new { id = taskId });
         }
 
         [HttpGet]
-        public async Task<IActionResult> Search([FromQuery] SearchTasksFilter filter, CancellationToken ct = default)
+        public async Task<IActionResult> GetLatest([FromQuery] SearchTasksFilter filter, CancellationToken ct = default)
         {
             ArgumentNullException.ThrowIfNull(filter);
 
-            var tasks = await taskAppService.Search(filter, ct);
+            var tasks = await taskAppService.GetLatestFinisheds(filter, ct);
 
             return Ok(tasks);
         }
@@ -40,12 +40,12 @@ namespace TaskManager.Controllers
             return Ok();
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Update([FromQuery] UpdateTaskCommand command, CancellationToken ct = default)
+        [HttpPut("{Id:Guid}")]
+        public async Task<IActionResult> Update([FromRoute] Guid Id, [FromBody] UpdateTaskCommand command, CancellationToken ct = default)
         {
             ArgumentNullException.ThrowIfNull(command);
 
-            await taskAppService.Update(command, ct);
+            await taskAppService.Update(command.SetId(Id), ct);
 
             return Ok();
         }

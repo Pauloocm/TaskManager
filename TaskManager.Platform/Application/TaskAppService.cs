@@ -14,8 +14,7 @@ namespace TaskManager.Platform.Application
 
             var task = TaskFactory.Create(command.Title, command.Description, command.Branch, command.TypeId);
 
-            await repository.Add(task, ct);
-            await repository.Commit(ct);
+            await repository.SaveAsync(task, ct);
 
             return task.Id;
         }
@@ -24,19 +23,19 @@ namespace TaskManager.Platform.Application
         {
             ArgumentNullException.ThrowIfNull(command);
 
-            var task = await repository.GetTask(command.Id, ct)
-                ?? throw new Exception($"Task with id {command.Id} not found");
+            var task = await repository.GetTaskByTitle(command.TaskTitle, ct)
+                ?? throw new Exception($"Task with name {command.TaskTitle} not found");
 
             task.Complete();
 
-            await repository.Commit(ct);
+            await repository.SaveAsync(task, ct);
         }
 
-        public async Task<List<TaskDto>> Search(SearchTasksFilter filter, CancellationToken ct = default)
+        public async Task<List<TaskDto>> GetLatestFinisheds(SearchTasksFilter filter, CancellationToken ct = default)
         {
             ArgumentNullException.ThrowIfNull(filter);
 
-            var tasks = await repository.SearchTasks(filter.Term, filter.Page, filter.Done, ct);
+            var tasks = await repository.GetLatestFinished(ct);
 
             return tasks!.ToDto();
         }
@@ -50,7 +49,7 @@ namespace TaskManager.Platform.Application
 
             task.Update(command.Title, command.Description, command.Branch);
 
-            await repository.Commit(ct);
+            await repository.SaveAsync(task, ct);
         }
     }
 }
