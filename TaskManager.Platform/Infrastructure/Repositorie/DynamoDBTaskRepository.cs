@@ -87,7 +87,7 @@ namespace TaskManager.Platform.Infrastructure.Repositorie
 
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue>() {
 
-                    { ":statusId", new AttributeValue { N = "1" } }
+                    { ":statusId", new AttributeValue { N = "2" } }
                 },
 
                 ScanIndexForward = true,
