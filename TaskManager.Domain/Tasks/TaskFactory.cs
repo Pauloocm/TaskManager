@@ -1,6 +1,6 @@
 ﻿namespace TaskManager.Domain.Tasks
 {
-    public class TaskFactory
+    public static class TaskFactory
     {
         public static Task Create(string title, string description, string branch, int typeId)
         {

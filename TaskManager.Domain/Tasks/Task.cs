@@ -28,6 +28,7 @@
             CompletedAt = DateTime.Now;
         }
 
+
         public void Update(string title, string description, string branch)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(title);

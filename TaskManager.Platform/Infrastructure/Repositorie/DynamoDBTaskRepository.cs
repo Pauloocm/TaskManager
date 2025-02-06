@@ -91,6 +91,28 @@ namespace TaskManager.Platform.Infrastructure.Repositorie
                 },
 
                 ScanIndexForward = true,
+                Limit = 8
+            };
+
+            var response = await dynamoDbClient.QueryAsync(queryRequest, ct);
+
+            return response.ToDomain();
+        }
+
+        public async Task<IEnumerable<Task?>> GetInProgress(CancellationToken ct = default)
+        {
+            var queryRequest = new QueryRequest
+            {
+                TableName = TableName,
+                IndexName = StatusIdSKIndex,
+                KeyConditionExpression = KeyConditionStatusId,
+
+                ExpressionAttributeValues = new Dictionary<string, AttributeValue>() {
+
+                    { ":statusId", new AttributeValue { N = "1" } }
+                },
+
+                ScanIndexForward = true,
                 Limit = 5
             };
 
