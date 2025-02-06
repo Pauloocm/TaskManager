@@ -1,4 +1,6 @@
-﻿namespace TaskManager.Domain.Tasks
+﻿using TaskManager.Domain.Tasks.Exceptions;
+
+namespace TaskManager.Domain.Tasks
 {
     public static class TaskFactory
     {
@@ -12,7 +14,7 @@
                 throw new ArgumentException("Type Id must be greater than 0");
 
             TaskType type = TaskType.GetById(typeId)
-                ?? throw new Exception("Invalid TypeId");
+                ?? throw new InvalidTaskTypeException(typeId);
 
             var task = new Task
             {
