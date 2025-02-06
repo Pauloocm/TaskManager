@@ -1,6 +1,7 @@
 ﻿using NSubstitute;
 using TaskManager.Domain.Tasks;
 using TaskManager.Platform.Application;
+using TaskManager.Platform.Application.Commands;
 using Task = System.Threading.Tasks.Task;
 using TaskStatus = TaskManager.Domain.Tasks.TaskStatus;
 
@@ -29,15 +30,6 @@ namespace TaskManager.Platform.Tests
         public async Task Add()
         {
             var command = new AddTaskCommand("title", "description", "branch", 1);
-
-            var expectedTask = new Domain.Tasks.Task()
-            {
-                Title = "Feature authentication",
-                Description = "Implement authentication feature",
-                Branch = "feature/authentication",
-                Status = TaskStatus.InProgress,
-                Type = TaskType.Feature
-            };
 
             var id = await taskAppService.Add(command);
 
@@ -136,7 +128,7 @@ namespace TaskManager.Platform.Tests
                 Arg.Any<CancellationToken>());
 
             await taskRepositoryMock.Received().SaveAsync(Arg.Is<Domain.Tasks.Task>(t => t.Id == expectedTask.Id
-            && t.Title == command.Title && t.Description == command.Description && t.Branch == command.Branch ));
+            && t.Title == command.Title && t.Description == command.Description && t.Branch == command.Branch));
         }
     }
 }

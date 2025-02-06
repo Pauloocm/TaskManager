@@ -1,4 +1,6 @@
 ﻿using TaskManager.Domain.Tasks;
+using TaskManager.Domain.Tasks.Exceptions;
+using TaskManager.Platform.Application.Commands;
 using TaskFactory = TaskManager.Domain.Tasks.TaskFactory;
 
 namespace TaskManager.Platform.Application
@@ -24,11 +26,18 @@ namespace TaskManager.Platform.Application
             ArgumentNullException.ThrowIfNull(command);
 
             var task = await repository.GetTaskByTitle(command.TaskTitle, ct)
-                ?? throw new Exception($"Task with name {command.TaskTitle} not found");
+                ?? throw new TaskNotFoundException();
 
             task.Complete();
 
             await repository.SaveAsync(task, ct);
+        }
+
+        public async Task<List<TaskDto>> GetInProgressTasks(CancellationToken ct = default)
+        {
+            var tasks = await repository.GetInProgress(ct);
+
+            return tasks!.ToDto();
         }
 
         public async Task<List<TaskDto>> GetLatestFinisheds(CancellationToken ct = default)
@@ -43,7 +52,7 @@ namespace TaskManager.Platform.Application
             ArgumentNullException.ThrowIfNull(command);
 
             var task = await repository.GetTask(command.Id, ct)
-                ?? throw new Exception($"Task with id {command.Id} not found");
+                ?? throw new TaskNotFoundException();
 
             task.Update(command.Title, command.Description, command.Branch);
 
