@@ -17,11 +17,19 @@ namespace TaskManager.Controllers
 
             var taskId = await taskAppService.Add(command, ct);
 
-            return Created(nameof(GetLatest), new { id = taskId });
+            return Created(nameof(GetLatestFinisheds), new { id = taskId });
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetLatest(CancellationToken ct = default)
+        [HttpGet("/InProgress")]
+        public async Task<IActionResult> GetInProgressTasks(CancellationToken ct = default)
+        {
+            var tasks = await taskAppService.GetInProgressTasks(ct);
+
+            return Ok(tasks);
+        }
+
+        [HttpGet("/Finisheds")]
+        public async Task<IActionResult> GetLatestFinisheds(CancellationToken ct = default)
         {
             var tasks = await taskAppService.GetLatestFinisheds(ct);
 

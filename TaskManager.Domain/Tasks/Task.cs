@@ -7,6 +7,8 @@
             Id = Guid.NewGuid();
             CreatedAt = DateTime.UtcNow;
             Status = TaskStatus.InProgress;
+
+            Strings = ["test"];
         }
 
         public Guid Id { get; set; }
@@ -27,6 +29,7 @@
             Status = TaskStatus.Done;
             CompletedAt = DateTime.Now;
         }
+
 
         public void Update(string title, string description, string branch)
         {

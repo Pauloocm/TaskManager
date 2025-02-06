@@ -31,6 +31,13 @@ namespace TaskManager.Platform.Application
             await repository.SaveAsync(task, ct);
         }
 
+        public async Task<List<TaskDto>> GetInProgressTasks(CancellationToken ct = default)
+        {
+            var tasks = await repository.GetInProgress(ct);
+
+            return tasks!.ToDto();
+        }
+
         public async Task<List<TaskDto>> GetLatestFinisheds(CancellationToken ct = default)
         {
             var tasks = await repository.GetLatestFinished(ct);
