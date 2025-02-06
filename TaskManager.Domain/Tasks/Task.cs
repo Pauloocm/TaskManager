@@ -7,8 +7,6 @@
             Id = Guid.NewGuid();
             CreatedAt = DateTime.UtcNow;
             Status = TaskStatus.InProgress;
-
-            Strings = ["test"];
         }
 
         public Guid Id { get; set; }

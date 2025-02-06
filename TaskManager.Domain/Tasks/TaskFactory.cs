@@ -12,7 +12,7 @@
                 throw new ArgumentException("Type Id must be greater than 0");
 
             TaskType type = TaskType.GetById(typeId)
-                ?? throw new Exception("Invalid task Type");
+                ?? throw new Exception("Invalid TypeId");
 
             var task = new Task
             {
