@@ -1,4 +1,4 @@
-﻿namespace TaskManager.Platform.Application
+﻿namespace TaskManager.Platform.Application.Commands
 {
     public record CompleteTaskCommand(string TaskTitle);
 }

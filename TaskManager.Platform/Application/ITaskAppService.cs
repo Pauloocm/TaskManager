@@ -1,4 +1,6 @@
-﻿namespace TaskManager.Platform.Application
+﻿using TaskManager.Platform.Application.Commands;
+
+namespace TaskManager.Platform.Application
 {
     public interface ITaskAppService
     {
