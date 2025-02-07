@@ -1,0 +1,30 @@
+# .github/workflows/deploy-lambda.yml
+
+name: Deploy Lambda
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${273354660373}:role/github-actions-role
+          aws-region: us-east-1
+
+      - name: Deploy Lambda
+        run: |
+          zip -r function.zip .
+          aws lambda update-function-code \
+            --function-name TaskManager-Api \
+            --zip-file fileb://function.zip
