@@ -20,7 +20,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::273354660373:role/github-actions-role
-          aws-region: us-east-1
+          aws-region: sa-east-1
 
       - name: Deploy Lambda
         run: |
