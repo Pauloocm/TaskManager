@@ -1,5 +1,6 @@
 ﻿using NSubstitute;
 using TaskManager.Domain.Tasks;
+using TaskManager.Domain.Tasks.Exceptions;
 using TaskManager.Platform.Application;
 using TaskManager.Platform.Application.Commands;
 using Task = System.Threading.Tasks.Task;
@@ -27,6 +28,25 @@ namespace TaskManager.Platform.Tests
         }
 
         [Test]
+        public void Add_Should_Throw_TaskAlreadyExists_If_GetTaskByTitle_Return_Not_Null()
+        {
+            var command = new AddTaskCommand("title", "description", "branch", 1);
+
+            var expectedTask = new Domain.Tasks.Task()
+            {
+                Id = Guid.NewGuid(),
+                Title = command.Title,
+                Description = "Implement authentication feature",
+                Branch = "feature/authentication",
+                Status = TaskStatus.InProgress
+            };
+
+            taskRepositoryMock.GetTaskByTitle(Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns(expectedTask);
+
+            Assert.ThrowsAsync<TaskAlreadyExistsException>(async () => await taskAppService.Add(command));
+        }
+
+        [Test]
         public async Task Add()
         {
             var command = new AddTaskCommand("title", "description", "branch", 1);
@@ -44,6 +64,14 @@ namespace TaskManager.Platform.Tests
         public void Complete_Should_Throw_If_Command_Is_Null()
         {
             Assert.ThrowsAsync<ArgumentNullException>(async () => await taskAppService.Complete(null!));
+        }
+
+        [Test]
+        public void Complete_Should_Throw_TaskNotFound_If_GetTaskByTitle_Returns_Null()
+        {
+            var command = new CompleteTaskCommand("Feature authentication");
+
+            Assert.ThrowsAsync<TaskNotFoundException>(async () => await taskAppService.Complete(command));
         }
 
         [Test]
@@ -98,6 +126,20 @@ namespace TaskManager.Platform.Tests
         public void Update_Should_Throw_If_Command_Is_Null()
         {
             Assert.ThrowsAsync<ArgumentNullException>(async () => await taskAppService.Update(null!));
+        }
+
+        [Test]
+        public void Update_Should_Throw_TaskNotFound_If_GetTask_Returns_Null()
+        {
+            var command = new UpdateTaskCommand()
+            {
+                Id = Guid.NewGuid(),
+                Title = "Title",
+                Description = "Description",
+                Branch = "Branch"
+            };
+
+            Assert.ThrowsAsync<TaskNotFoundException>(async () => await taskAppService.Update(command));
         }
 
         [Test]

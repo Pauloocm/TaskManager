@@ -14,6 +14,10 @@ namespace TaskManager.Platform.Application
         {
             ArgumentNullException.ThrowIfNull(command);
 
+            var existentTask = await repository.GetTaskByTitle(command.Title, ct);
+
+            if (existentTask is not null) throw new TaskAlreadyExistsException(command.Title);
+
             var task = TaskFactory.Create(command.Title, command.Description, command.Branch, command.TypeId);
 
             await repository.SaveAsync(task, ct);
@@ -25,8 +29,7 @@ namespace TaskManager.Platform.Application
         {
             ArgumentNullException.ThrowIfNull(command);
 
-            var task = await repository.GetTaskByTitle(command.TaskTitle, ct)
-                ?? throw new TaskNotFoundException();
+            var task = await repository.GetTaskByTitle(command.TaskTitle, ct) ?? throw new TaskNotFoundException();
 
             task.Complete();
 
@@ -51,8 +54,7 @@ namespace TaskManager.Platform.Application
         {
             ArgumentNullException.ThrowIfNull(command);
 
-            var task = await repository.GetTask(command.Id, ct)
-                ?? throw new TaskNotFoundException();
+            var task = await repository.GetTask(command.Id, ct) ?? throw new TaskNotFoundException();
 
             task.Update(command.Title, command.Description, command.Branch);
 
