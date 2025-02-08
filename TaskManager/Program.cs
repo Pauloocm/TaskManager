@@ -1,5 +1,6 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
+using Serilog;
 using TaskManager.Domain.Tasks;
 using TaskManager.Platform.Application;
 using TaskManager.Platform.Infrastructure.Repositorie;
@@ -10,6 +11,11 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Host.UseSerilog((_, loggerConfig) =>
+{
+    loggerConfig.WriteTo.Console().ReadFrom.Configuration(builder.Configuration);
+});
 
 builder.Services.AddAWSLambdaHosting(LambdaEventSource.HttpApi);
 

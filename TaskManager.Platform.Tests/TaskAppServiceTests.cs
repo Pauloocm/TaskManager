@@ -1,4 +1,5 @@
-﻿using NSubstitute;
+﻿using Microsoft.Extensions.Logging;
+using NSubstitute;
 using TaskManager.Domain.Tasks;
 using TaskManager.Domain.Tasks.Exceptions;
 using TaskManager.Platform.Application;
@@ -12,13 +13,15 @@ namespace TaskManager.Platform.Tests
     public class TaskAppServiceTests
     {
         private ITaskRepository taskRepositoryMock = null!;
+        private ILogger<TaskAppService> loggerMock = null!;
         private TaskAppService taskAppService = null!;
 
         [SetUp]
         public void Setup()
         {
             taskRepositoryMock = Substitute.For<ITaskRepository>();
-            taskAppService = new TaskAppService(taskRepositoryMock);
+            loggerMock = Substitute.For<ILogger<TaskAppService>>();
+            taskAppService = new TaskAppService(taskRepositoryMock, loggerMock);
         }
 
         [Test]
