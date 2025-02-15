@@ -6,7 +6,7 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/Pauloocm/TaskManager)
 ![Build Status](https://img.shields.io/github/actions/workflow/status/Pauloocm/TaskManager/dotnet-desktop.yml)
 
-TaskManager is a serverless task management system that allows users to create, update, delete, and complete tasks. Additionally, on the 1st day of each month, a PDF report is generated with various task completion metrics.
+TaskManager is a serverless task management system that allows users to create, update and complete tasks. Additionally, on the 1st day of each month, a PDF report is generated with various task completion metrics.
 
 ## 🚀 Tech Stack
 
@@ -15,6 +15,7 @@ TaskManager is a serverless task management system that allows users to create, 
 ![DynamoDB](https://img.shields.io/badge/AWS_DynamoDB-4053D6?style=for-the-badge&logo=amazon-dynamodb&logoColor=white)
 ![S3](https://img.shields.io/badge/AWS_S3-569A31?style=for-the-badge&logo=amazon-s3&logoColor=white)
 ![AWS EventBridge](https://img.shields.io/badge/AWS_EventBridge-8C4FFF?style=for-the-badge&logo=amazonaws&logoColor=white)
+![AWS CloudWatch](https://img.shields.io/badge/AWS_CloudWatch-FF4F8B?style=for-the-badge&logo=amazonaws&logoColor=white)
 ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)
 ![NUnit](https://img.shields.io/badge/NUnit-25A162?style=for-the-badge&logo=nunit&logoColor=white)
 
@@ -61,3 +62,14 @@ TaskManager follows a fully serverless architecture using AWS services:
    ```sh
    git clone https://github.com/Pauloocm/TaskManager.git
    cd TaskManager
+
+## 📊 System Design
+
+```mermaid
+graph TD
+    A[API Gateway] --> B[Lambda - Task API]
+    B --> C[DynamoDB]
+    D[EventBridge] --> E[Lambda - Report Generator]
+    E --> C
+    E --> F[S3 - Reports]
+```
