@@ -21,6 +21,17 @@ TaskManager is a serverless task management system that allows users to create, 
 
 TaskManager is a serverless task management system that allows users to create, update, delete, and complete tasks. Additionally, on the 1st day of each month, a PDF report is generated with various task completion metrics.
 
+## 📊 System Design
+
+```mermaid
+graph TD
+    A[API Gateway] --> B[Lambda - Task API]
+    B --> C[DynamoDB]
+    D[EventBridge] --> E[Lambda - Report Generator]
+    E --> C
+    E --> F[S3 - Reports]
+```
+
 ## Features
 
 - **Task Management (CRUD)**: Create, update, delete, and complete tasks.
@@ -62,14 +73,3 @@ TaskManager follows a fully serverless architecture using AWS services:
    ```sh
    git clone https://github.com/Pauloocm/TaskManager.git
    cd TaskManager
-
-## 📊 System Design
-
-```mermaid
-graph TD
-    A[API Gateway] --> B[Lambda - Task API]
-    B --> C[DynamoDB]
-    D[EventBridge] --> E[Lambda - Report Generator]
-    E --> C
-    E --> F[S3 - Reports]
-```
