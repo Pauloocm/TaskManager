@@ -19,8 +19,6 @@ TaskManager is a serverless task management system that allows users to create, 
 ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)
 ![NUnit](https://img.shields.io/badge/NUnit-25A162?style=for-the-badge&logo=nunit&logoColor=white)
 
-TaskManager is a serverless task management system that allows users to create, update, delete, and complete tasks. Additionally, on the 1st day of each month, a PDF report is generated with various task completion metrics.
-
 ## 📊 System Design
 
 ```mermaid
