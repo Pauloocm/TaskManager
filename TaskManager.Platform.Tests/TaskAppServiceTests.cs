@@ -72,7 +72,7 @@ namespace TaskManager.Platform.Tests
         [Test]
         public void Complete_Should_Throw_TaskNotFound_If_GetTaskByTitle_Returns_Null()
         {
-            var command = new CompleteTaskCommand("Feature authentication");
+            var command = new CompleteTaskCommand(Guid.NewGuid());
 
             Assert.ThrowsAsync<TaskNotFoundException>(async () => await taskAppService.Complete(command));
         }
@@ -80,25 +80,26 @@ namespace TaskManager.Platform.Tests
         [Test]
         public async Task Complete()
         {
-            var command = new CompleteTaskCommand("Feature authentication");
+            var taskId = Guid.NewGuid();
+            var command = new CompleteTaskCommand(taskId);
 
             var expectedTask = new Domain.Tasks.Task()
             {
-                Id = Guid.NewGuid(),
+                Id = taskId,
                 Title = "Feature authentication",
                 Description = "Implement authentication feature",
                 Branch = "feature/authentication",
                 Status = TaskStatus.InProgress
             };
 
-            taskRepositoryMock.GetTaskByTitle(Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns(expectedTask);
+            taskRepositoryMock.GetTask(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(expectedTask);
 
             await taskAppService.Complete(command);
 
-            await taskRepositoryMock.Received().GetTaskByTitle(Arg.Is<string>(i => i == command.TaskTitle),
+            await taskRepositoryMock.Received().GetTask(Arg.Is<Guid>(i => i == command.Id),
                 Arg.Any<CancellationToken>());
 
-            await taskRepositoryMock.Received().SaveAsync(Arg.Is<Domain.Tasks.Task>(t => t.Title == command.TaskTitle));
+            await taskRepositoryMock.Received().SaveAsync(Arg.Is<Domain.Tasks.Task>(t => t.Id == command.Id));
         }
 
         [Test]
