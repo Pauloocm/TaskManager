@@ -1,5 +1,7 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
+using AWS.Logger;
+using AWS.Logger.SeriLog;
 using Serilog;
 using TaskManager.Domain.Tasks;
 using TaskManager.Platform.Application;
@@ -12,12 +14,22 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
+var awsLoggerConfig = new AWSLoggerConfig("/aws/lambda/TaskManager-Api")
+{
+    Region = "us-east-1", // Change to your AWS region
+    LibraryLogFileName = "/tmp/aws-logger-errors.txt" // Use /tmp/ instead of /var/task/
+};
+
 builder.Host.UseSerilog((_, loggerConfig) =>
 {
-    loggerConfig.WriteTo.Console().ReadFrom.Configuration(builder.Configuration);
+    loggerConfig.WriteTo.Console().ReadFrom.Configuration(builder.Configuration)
+    .WriteTo.AWSSeriLog(awsLoggerConfig);
 });
 
 builder.Services.AddAWSLambdaHosting(LambdaEventSource.HttpApi);
+
+
 
 //DynamoDb
 

@@ -49,9 +49,9 @@ namespace TaskManager.Platform.Application
         {
             ArgumentNullException.ThrowIfNull(command);
 
-            logger.LogInformation("Starting CompleteTask process for task {Title}", command.TaskTitle);
+            logger.LogInformation("Starting CompleteTask process for task {Title}", command.Id);
 
-            var task = await repository.GetTaskByTitle(command.TaskTitle, ct) ?? throw new TaskNotFoundException();
+            var task = await repository.GetTask(command.Id, ct) ?? throw new TaskNotFoundException();
 
             logger.LogInformation("Task returned successfully. TaskId: {Id}", task.Id);
 

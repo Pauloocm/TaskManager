@@ -37,7 +37,7 @@ namespace TaskManager.Controllers
             return Ok(tasks);
         }
 
-        [HttpPut("/Complete/{taskTitle}")]
+        [HttpPut("/Complete/{Id:Guid}")]
         public async Task<IActionResult> Complete([FromRoute] CompleteTaskCommand command, CancellationToken ct = default)
         {
             ArgumentNullException.ThrowIfNull(command);
