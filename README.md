@@ -18,6 +18,7 @@ TaskManager is a serverless task management system that allows users to create, 
 ![AWS CloudWatch](https://img.shields.io/badge/AWS_CloudWatch-FF4F8B?style=for-the-badge&logo=amazonaws&logoColor=white)
 ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)
 ![NUnit](https://img.shields.io/badge/NUnit-25A162?style=for-the-badge&logo=nunit&logoColor=white)
+![Serilog](https://img.shields.io/badge/Serilog-1E90FF?style=for-the-badge&logo=serilog&logoColor=white)
 
 ## 📊 System Design
 
@@ -32,36 +33,36 @@ graph TD
 
 ## Features
 
-- **Task Management (CRUD)**: Create, update, delete, and complete tasks.
-- **Monthly Report Generation**: Automatically generates a PDF report on the 1st day of each month.
-- **Task Completion Metrics**:
-  - List of completed tasks in the last month.
-  - Average time to complete tasks.
-  - The slowest and fastest completed tasks.
-- **Serverless Architecture**:
-  - Built with **.NET 8 Web API**.
-  - Uses **AWS Lambda** for API hosting.
-  - Stores data in **Amazon DynamoDB**.
-  - Monthly report generation triggered by **AWS EventBridge**.
+- **✅ Task Management (CRUD)**  
+  Effortlessly manage tasks with full **Create, Read, Update, and Delete (CRUD)** operations, including the ability to mark tasks as completed.
+
+- **📅 Automated Monthly Reports**  
+  - A **PDF report** is generated automatically on the **1st day of each month**.  
+  - Provides insights into task completion trends.  
   - Reports are stored in **Amazon S3**.
-- **Unit Testing**: Implemented using **NUnit**.
+
+- **📊 Task Completion Metrics**  
+  - **📜 Completed Tasks List** – View all tasks completed in the last month.  
+  - **⏳ Average Completion Time** – Analyze how long tasks typically take to complete.  
+  - **🚀 Fastest & 🐢 Slowest Completed Tasks** – Identify the quickest and slowest task completions.
+
 
 ## Architecture
 
 TaskManager follows a fully serverless architecture using AWS services:
 
-1. **Task Management API**  
-   - Built using **.NET 8 Web API**.  
-   - Hosted as an **AWS Lambda function**.  
-   - Uses **Amazon API Gateway** (if applicable) to expose endpoints.  
-   - Stores task data in **Amazon DynamoDB**.  
+### 1️⃣ Task Management API  
+- Built using **.NET 8 Web API**.  
+- Hosted as an **AWS Lambda function** for efficient execution.  
+- Uses **Amazon API Gateway** (if applicable) to expose endpoints.  
+- Stores task data in **Amazon DynamoDB** for low-latency access.  
+### 2️⃣ Monthly Report Generation  
+- **⏰ Automated Trigger**: Executed by **AWS EventBridge** on the **1st day of each month**.  
+- **📝 Data Processing**: Reads completed task data from **Amazon DynamoDB**.  
+- **📄 PDF Report Creation**: Generates a detailed report with task completion metrics.  
+- **☁️ Storage & Access**: Stores the generated report securely in an **Amazon S3 bucket**.  
+- **📊 Logging & Debugging**: Logs execution details and potential failures using **CloudWatch Logs** with **Serilog**, ensuring visibility into the report generation process.
 
-2. **Monthly Report Generation**  
-   - Triggered by **AWS EventBridge** on the 1st day of each month.  
-   - Executed by a dedicated **AWS Lambda function**.  
-   - Reads completed task data from **Amazon DynamoDB**.  
-   - Generates a PDF report with task completion metrics.  
-   - Stores the report in an **Amazon S3 bucket**.  
 
 
 
@@ -71,3 +72,15 @@ TaskManager follows a fully serverless architecture using AWS services:
    ```sh
    git clone https://github.com/Pauloocm/TaskManager.git
    cd TaskManager
+
+## 📸 Screenshots
+
+Below are some images showcasing the TaskManager in action:
+
+### Dashboard
+![image](https://github.com/user-attachments/assets/a17078c5-1879-4626-9506-50be456dbd60)
+
+
+### Task Creation
+![image](https://github.com/user-attachments/assets/4d2c1c87-669e-447c-ba9b-1d1806fd14ea)
+
