@@ -10,32 +10,36 @@ using TaskManager.Platform.Infrastructure.Repositorie;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-var awsLoggerConfig = new AWSLoggerConfig("/aws/lambda/TaskManager-Api")
+var awsLoggerConfig = new AWSLoggerConfig(builder.Configuration["Serilog:LogGroup"])
 {
-    Region = "us-east-1", // Change to your AWS region
-    LibraryLogFileName = "/tmp/aws-logger-errors.txt" // Use /tmp/ instead of /var/task/
+    Region = "sa-east-1",
+    LibraryLogErrors = true,
+    LibraryLogFileName = "/tmp/aws-logger-errors.txt"
 };
 
-builder.Host.UseSerilog((_, loggerConfig) =>
+builder.Host.UseSerilog((context, loggerConfig) =>
 {
-    loggerConfig.WriteTo.Console().ReadFrom.Configuration(builder.Configuration)
-    .WriteTo.AWSSeriLog(awsLoggerConfig);
+    loggerConfig
+        .MinimumLevel.Debug()
+        .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Error)
+        .MinimumLevel.Override("System", Serilog.Events.LogEventLevel.Error)
+        .MinimumLevel.Override("Microsoft.Hosting.Lifetime", Serilog.Events.LogEventLevel.Information)
+        .WriteTo.Console()
+        .WriteTo.AWSSeriLog(awsLoggerConfig, iFormatProvider: null,
+            textFormatter: new Serilog.Formatting.Json.JsonFormatter());
 });
 
+builder.Services.AddSingleton(awsLoggerConfig);
+
 builder.Services.AddAWSLambdaHosting(LambdaEventSource.HttpApi);
-
-
-
-//DynamoDb
-
 builder.Services.AddAWSService<IAmazonDynamoDB>();
-
 builder.Services.AddScoped<IDynamoDBContext, DynamoDBContext>();
+
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddTransient<ITaskAppService, TaskAppService>();
 
