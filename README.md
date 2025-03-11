@@ -52,9 +52,9 @@ graph TD
 TaskManager follows a fully serverless architecture using AWS services:
 
 ### 1️⃣ Task Management API  
-- Built using **.NET 8 Web API**.  
-- Hosted as an **AWS Lambda function** for efficient execution.  
-- Uses **Amazon API Gateway** (if applicable) to expose endpoints.  
+- Built using **.NET 8 Web API**.
+- Uses **Amazon API Gateway** to expose endpoints.  
+- Hosted as an **AWS Lambda function** for efficient execution.   
 - Stores task data in **Amazon DynamoDB** for low-latency access.  
 ### 2️⃣ Monthly Report Generation  
 - **⏰ Automated Trigger**: Executed by **AWS EventBridge** on the **1st day of each month**.  
